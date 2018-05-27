@@ -1,0 +1,18 @@
+{
+	// Tweak how the text looks 
+	"font_size": 11,
+	"line_padding_bottom": 2,
+	"line_padding_top": 0,
+	
+	// Show file encoding at bottom right
+	"show_encoding": true,
+
+	"color_scheme": "Packages/Color Scheme - Default/Blackboard.tmTheme",
+	"save_on_focus_lost": true,
+	"highlight_modified_tabs": true,
+	"caret_style": "phase",
+	"highlight_line": true,
+	"fade_fold_buttons": false,
+	"bold_folder_labels": true
+
+}

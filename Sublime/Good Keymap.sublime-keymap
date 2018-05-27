@@ -1,0 +1,19 @@
+[
+
+//reindent
+{ "keys": ["ctrl+shift+r"], "command": "reindent" , "args": { "single_line": false } },
+
+//paste and indent automatically
+{ "keys": ["ctrl+v"], "command": "paste_and_indent" },
+
+{ "keys": ["ctrl+shift+v"], "command": "paste" },
+
+// for uppercase:
+{ "keys": ["ctrl+u"], "command": "upper_case" },
+
+// for lowercase:
+{ "keys": ["ctrl+l"], "command": "lower_case" },
+
+// for titlecase:
+{ "keys": ["ctrl+t"], "command": "title_case" }
+]

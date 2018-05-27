@@ -1,0 +1,19 @@
+#Git Dos
+1. nav to your directory
+2. git init
+3. git status & touch .gitignore (add file/directory names there)
+4. git add .
+5. git commit -m "commit message"
+6. git config --global user.name "user name"
+7. git config --global user.email "user email"
+8. git remote add origin https://github.com/Udayraj123/life.git # Do not paste url, if pasted, check for the space between the terms
+9. git config --global https.proxy http://172.16.114.117:3128
+10. git push -u origin master #done once, 
+
+from next time-
+1. git add .
+2. git push
+3. git commit -m "commit message"
+
+remove 
+git remote rm origin
