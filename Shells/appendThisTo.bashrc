@@ -1,4 +1,3 @@
-
 # Sequence of text colors : black (0), red, green, yellow, blue, magenta, cyan,white
 # https://ss64.com/bash/syntax-prompt.html
 _black=$(tput setaf 0);	_red=$(tput setaf 1);
@@ -8,6 +7,34 @@ _cyan=$(tput setaf 6);	_white=$(tput setaf 7);
 _reset=$(tput sgr0);		_bold=$(tput bold);
 # ^Above can be used anywhere in printable strings in bash(examples below)(Not in awk's internal printf and the alike).
 # Syntax guide: Each color only marks the start of that color(see examples below)
+
+update_pass(){
+	#Set password into encrypted file
+	echo -n "Enter password: ";
+	read -rs PASSWD
+	sudo -k ; # Flush sudo session if any.
+	echo $PASSWD | sudo -S echo &> /dev/null ;
+	success_flag=$?;
+	if [ $success_flag -eq 0 ];then
+	    	echo $PASS openssl enc -aes-128-cbc -a -salt -pass pass:mysalt >> ~/.myencpswd;	
+		echo "$_green Password updated. $_reset";
+	else 
+	    	echo "$_red Wrong password. Run update_pass again! $reset";
+	fi
+# ref: https://askubuntu.com/questions/611580/how-to-check-the-password-entered-is-a-valid-password-for-this-user	
+}
+
+first_time(){
+	# Add source for subl, ref: http://tipsonubuntu.com/2017/05/30/install-sublime-text-3-ubuntu-16-04-official-way/
+	wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
+	echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list
+	sudo apt-get update
+
+	# Install all dependecies
+	sudo apt-get install sublime-text tree xkbset xclip lolcat cowsay
+
+update_pass();
+}
 
 # Note: PS1 is overridden by ~/.bashrc at last, so put these lines there (separately for each user, including root!):
 # Or you can comment the lines there, then uncomment here!
@@ -209,7 +236,7 @@ clearcass(){
 }
 
 
-# requires xkbset & "mouse keys" enabled from Access Center
+# install xkbset first & enable "mouse keys" from Access Center
 alias fastmouse="xkbset ma 60 10 100 100 2";
 alias smoothmouse="xkbset ma 60 10 100 50 2";
 alias kbmouse="xkbset q | grep Mouse"; #list mouse settings
@@ -226,13 +253,14 @@ echo -ne "\n${_bold}${_blue}Aliases: $_reset$_green";
 cat /etc/bash.bashrc | awk '{if($1=="alias")printf("%s,",$2);}' | awk -F= 'BEGIN{RS=",";}{printf("%s, ",$1);}END{;}';
 echo "$_reset";
 
-##########################  For people lazy to enter passwords- ##########################  
+########################## password-typer For people lazy to enter passwords- ##########################  
 #  Step 1 of 2 : For the first time, run this command(you can change 'mysalt' to any string) -
 #		 		 echo your-password-here | openssl enc -aes-128-cbc -a -salt -pass pass:mysalt >> ~/.myencpswd
 #  Step 2 of 2 : Remove above entry from history-
 #  				 history -d $(history | tail -2 | head -1 |  awk '{print $1;}')
 #Reference -https://unix.stackexchange.com/questions/291302/password-encryption-and-decryption
 
+# Comment this line if you don't want the password-typer feature:
 alias s="echo $(cat ~/.myencpswd | openssl enc -d -aes-128-cbc -a -salt -pass pass:mysalt) |"
 # ^Note : the pipe(|) at the end also prevents printing the password in terminal 
 # 		  on pressing `s` or `s echo` (as echo doesn't read from stdin)
