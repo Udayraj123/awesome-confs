@@ -18,7 +18,8 @@ update_pass(){
 	if [ $success_flag -eq 0 ];then
 	    	echo $PASS openssl enc -aes-128-cbc -a -salt -pass pass:mysalt >> ~/.myencpswd;	
 		echo "$_green Password updated. $_reset";
-	else 
+#Reference -https://unix.stackexchange.com/questions/291302/password-encryption-and-decryption	
+else 
 	    	echo "$_red Wrong password. Run update_pass again! $reset";
 	fi
 # ref: https://askubuntu.com/questions/611580/how-to-check-the-password-entered-is-a-valid-password-for-this-user	
@@ -253,15 +254,10 @@ echo -ne "\n${_bold}${_blue}Aliases: $_reset$_green";
 cat /etc/bash.bashrc | awk '{if($1=="alias")printf("%s,",$2);}' | awk -F= 'BEGIN{RS=",";}{printf("%s, ",$1);}END{;}';
 echo "$_reset";
 
-########################## password-typer For people lazy to enter passwords- ##########################  
-#  Step 1 of 2 : For the first time, run this command(you can change 'mysalt' to any string) -
-#		 		 echo your-password-here | openssl enc -aes-128-cbc -a -salt -pass pass:mysalt >> ~/.myencpswd
-#  Step 2 of 2 : Remove above entry from history-
-#  				 history -d $(history | tail -2 | head -1 |  awk '{print $1;}')
-#Reference -https://unix.stackexchange.com/questions/291302/password-encryption-and-decryption
-
+########################## password-typer alias: For people lazy to enter passwords- ##########################  
+# The file is set from update_pass function.
 # Comment this line if you don't want the password-typer feature:
-alias s="echo $(cat ~/.myencpswd | openssl enc -d -aes-128-cbc -a -salt -pass pass:mysalt) |"
+alias s="echo $(cat ~/.myencpswd | openssl enc -d -aes-128-cbc -a -salt -pass pass:mysalt) |";
 # ^Note : the pipe(|) at the end also prevents printing the password in terminal 
 # 		  on pressing `s` or `s echo` (as echo doesn't read from stdin)
 
@@ -343,3 +339,6 @@ fi
 	# ${@:2} does not work in sh, only bash. this is called substring expansion and has a special behaviour for @.
 	# usually it counts the characters, but for @ it counts the parameters
 	# For sh, type the command 'shift', then $@ contains
+
+# Remove previous entry from history-
+# history -d $(history | tail -2 | head -1 |  awk '{print $1;}')
