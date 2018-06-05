@@ -16,10 +16,10 @@ update_pass(){
 	echo $PASSWD | sudo -S echo &> /dev/null ;
 	success_flag=$?;
 	if [ $success_flag -eq 0 ];then
-	    	echo $PASS openssl enc -aes-128-cbc -a -salt -pass pass:mysalt >> ~/.myencpswd;	
+	    	echo $PASS openssl enc -aes-128-cbc -a -salt -pass pass:mysalt > ~/.myencpswd;	
 		echo "$_green Password updated. $_reset";
-#Reference -https://unix.stackexchange.com/questions/291302/password-encryption-and-decryption	
-else 
+		#Reference -https://unix.stackexchange.com/questions/291302/password-encryption-and-decryption	
+	else 
 	    	echo "$_red Wrong password. Run update_pass again! $reset";
 	fi
 # ref: https://askubuntu.com/questions/611580/how-to-check-the-password-entered-is-a-valid-password-for-this-user	
