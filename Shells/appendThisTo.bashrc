@@ -16,26 +16,28 @@ update_pass(){
 	echo $PASSWD | sudo -S echo &> /dev/null ;
 	success_flag=$?;
 	if [ $success_flag -eq 0 ];then
-	    	echo $PASS openssl enc -aes-128-cbc -a -salt -pass pass:mysalt > ~/.myencpswd;	
+	    	echo $PASSWD | openssl enc -aes-128-cbc -a -salt -pass pass:mysalt > ~/.myencpswd;	
 		echo "$_green Password updated. $_reset";
 		#Reference -https://unix.stackexchange.com/questions/291302/password-encryption-and-decryption	
 	else 
 	    	echo "$_red Wrong password. Run update_pass again! $reset";
 	fi
+	PASSWD=;//reset var
 # ref: https://askubuntu.com/questions/611580/how-to-check-the-password-entered-is-a-valid-password-for-this-user	
 }
 
 first_time(){
-	# Add source for subl, 
-	sudo add-apt-repository ppa:webupd8team/sublime-text-3
-	# Official wasn't working somehow: ref: http://tipsonubuntu.com/2017/05/30/install-sublime-text-3-ubuntu-16-04-official-way/
-	
-	sudo apt-get update
+	if ! [ -x "$(command -v subl)" ]; then
+  		# Add source for subl, 
+		sudo add-apt-repository ppa:webupd8team/sublime-text-3
+		# Official wasn't working somehow: ref: http://tipsonubuntu.com/2017/05/30/install-sublime-text-3-ubuntu-16-04-official-way/
+		sudo apt-get update
+		sudo apt-get install sublime-text-installer;
+	fi	
 
 	# Install all dependecies
-	sudo apt-get install sublime-text-installer tree xkbset xclip lolcat cowsay
-
-update_pass();
+	sudo apt-get install tree xkbset xclip lolcat cowsay
+	update_pass;
 }
 
 # Note: PS1 is overridden by ~/.bashrc at last, so put these lines there (separately for each user, including root!):
@@ -261,6 +263,11 @@ echo "$_reset";
 alias s="echo $(cat ~/.myencpswd | openssl enc -d -aes-128-cbc -a -salt -pass pass:mysalt) |";
 # ^Note : the pipe(|) at the end also prevents printing the password in terminal 
 # 		  on pressing `s` or `s echo` (as echo doesn't read from stdin)
+
+if [ ! -f ~/.myencpswd ]; then 
+	echo "Password file not set. Set the password to continue:";
+	update_pass;
+fi
 
 # Now just prepend an 's' before sudo -S -E to bypass - Example usage : 's sudo -S -E ..' or 's bashrc'
 ######  ##########################  ##########################  ##########################  
