@@ -1,0 +1,136 @@
+{
+  "Actions": {
+    "Bookmark": "UDL",
+    "Duplicate": "",
+    "NewTab": "U",
+    "Reload": "URDLU",
+    "ReloadCache": "",
+    "StopLoading": "",
+    "Remove": "D",
+    "RemoveRight": "RLRL",
+    "RemoveLeft": "",
+    "RemoveOther": "",
+    "Restore": "DRU",
+    "ZoomIn": "RU",
+    "ZoomOut": "DL",
+    "ZoomReset": "RUDL",
+    "Back": "LR",
+    "Forth": "RL",
+    "Pin": "URDL",
+    "Mute": "",
+    "ScrollTop": "ULD",
+    "ScrollBottom": "",
+    "ScrollPageUp": "",
+    "ScrollPageDown": "DLU",
+    "Next": "R",
+    "Previous": "L",
+    "FirstTab": "LRLR",
+    "LastTab": "",
+    "PreviousSelectedTab": "",
+    "Maximize": "",
+    "Minimize": "LD",
+    "ToggleWindowSize": "",
+    "Fullscreen": "",
+    "NewWindow": "",
+    "NewPrivateWindow": "",
+    "TabToWindow": "",
+    "CloseWindow": "",
+    "ReloadAll": "",
+    "ReloadAllCaches": "",
+    "URLLevelUp": "ULDL",
+    "IncreaseURLNumber": "RURU",
+    "DecreaseURLNumber": "RDRD",
+    "ImageToTab": "",
+    "LinkToForegroundTab": "",
+    "LinkToBackgroundTab": "UR",
+    "LinkToBookmark": "",
+    "LinkToWindow": "",
+    "LinkToPrivateWindow": "",
+    "SearchSelection": "",
+    "OpenHomepage": "",
+    "OpenAddonSettings": "LDRULR",
+    "OpenLink": "",
+    "OpenImage": "",
+    "SaveAsPDF": "",
+    "Print": "",
+    "PrintPreview": "",
+    "SaveScreenshot": "",
+    "SaveImage": "",
+    "CopyTabURL": "",
+    "CopyLinkURL": "",
+    "CopyTextSelection": "",
+    "CopyImage": "",
+    "ViewPageSourceCode": "",
+    "PopupAllTabs": "",
+    "PopupRecentlyClosedTabs": ""
+  },
+  "Settings": {
+    "Actions": {
+      "searchEngineURL": "https://www.google.com/search?q=",
+      "focusSearchResult": true,
+      "homepageURL": "about:home",
+      "scrollDuration": 100,
+      "scrollPageDuration": 300,
+      "newTabOnEmptyLink": false,
+      "focusImageToTab": true,
+      "newTabPosition": "default",
+      "removeTabFocus": "default",
+      "firstTabIncludePinned": false,
+      "removePinnedTabs": true,
+      "zoomStep": "",
+      "promptSaveImageAs": true
+    },
+    "Gesture": {
+      "mouseButton": 2,
+      "suppressionKey": "ctrlKey",
+      "distanceThreshold": 10,
+      "distanceSensitivity": 10,
+      "Timeout": {
+        "active": true,
+        "duration": 2
+      },
+      "Trace": {
+        "display": true,
+        "style": {
+          "opacity": 0.8,
+          "strokeStyle": "#00AAA0",
+          "lineWidth": 10,
+          "lineGrowth": 0.6
+        }
+      },
+      "Directions": {
+        "display": true,
+        "style": {
+          "color": "#FFFFFF",
+          "backgroundColor": "#000000",
+          "backgroundOpacity": 0.3,
+          "fontSize": "8vh",
+          "textAlign": "center"
+        }
+      },
+      "Action": {
+        "display": true,
+        "style": {
+          "color": "#FFFFFF",
+          "backgroundColor": "#000000",
+          "backgroundOpacity": 0.3,
+          "fontSize": "6vh"
+        }
+      }
+    },
+    "Rocker": {
+      "active": true,
+      "leftMouseClick": "Reload",
+      "rightMouseClick": "StopLoading"
+    },
+    "Wheel": {
+      "active": false,
+      "mouseButton": 1,
+      "wheelUp": "Previous",
+      "wheelDown": "Next"
+    },
+    "General": {
+      "updateNotification": true
+    }
+  }
+}
