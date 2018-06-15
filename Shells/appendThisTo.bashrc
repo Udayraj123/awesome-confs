@@ -1,3 +1,6 @@
+############## ############## AWESOME-BASHRC CODE BELOW ############## ##############
+# <<< Made with ♥ by Udayraj >>>
+
 # Sequence of text colors : black (0), red, green, yellow, blue, magenta, cyan,white
 # https://ss64.com/bash/syntax-prompt.html
 _black=$(tput setaf 0);	_red=$(tput setaf 1);
@@ -50,9 +53,15 @@ first_time(){
 		echo "Replacing gedit with sublime as default editor..."
 		sudo sed -i 's/gedit.desktop/sublime_text.desktop/g' /etc/gnome/defaults.list 
 	fi	
-
+	
 	# Install all dependecies
-	sudo apt-get install tree xkbset xclip lolcat cowsay
+	sudo apt-get install -y git tree xkbset xclip lolcat cowsay sox libsox-fmt-all
+	# tree for lstree function
+	# xkbset for mouse control via numpad
+	# xclip can copy/paste from terminal
+	# lolcat cowsay for fancy displaying.
+	# sox libsox-fmt-all are needed for 'play' command
+
 	update_pass;
 }
 
@@ -143,6 +152,7 @@ alias v="xclip -o";
 
 # TODO: Git clone from clipboard url (with validation)
 # https://stackoverflow.com/questions/749544/pipe-to-from-the-clipboard-in-bash-script?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+# ^ xclip would do it
 
 
 #### FILES RELATED #### 
@@ -160,8 +170,16 @@ mcd(){ -S
 mkdir $1;
 cd $1;
 }
+
+# useful in competitive programming- to delete all .out files and alike from current directory
 alias rmexecs="find . -type f -executable -exec rm '{}' \;"
 #rm $(find . -type f | xargs file | grep "ELF.*shared object" | awk -F: '{print $1}' | xargs echo)
+
+# find declaration of some alias - 
+# Inbuilt alias keyword also does this-  usage: 'alias my_alias' !!
+showalias(){ # expand keyword is taken
+	cat /etc/bash.bashrc | grep -iE -A $2 "alias $1 ?=";
+}
 
 myclone(){
 	# Put address to your repo here-
@@ -230,6 +248,7 @@ alias checkneo4j="sudo -u neo4j neo4j status || sudo systemctl status neo4j";
 # '&&' ensures to run second command only if first runs
 alias resquid="parse_squid && execute_with_feedback sudo service squid restart && testnet";
 alias reapache2="execute_with_feedback sudo service apache2 restart";
+alias rebash="exec bash";
 
 #Config files
 alias bashrc="sudo -S -E subl /etc/bash.bashrc";
@@ -266,7 +285,8 @@ alias kbmouse="xkbset q | grep Mouse"; #list mouse settings
 
 
 ### Things related to this file ###
-## startup lines are printed from here 
+
+## STARTUP LINES PRINTED FROM HERE 
 
 #lists all functions defined in this file
 echo -n "${_bold}${_blue}Functions: $_reset$_magenta";
@@ -277,16 +297,12 @@ done < <(grep -o '^ *\w\w*()' /etc/bash.bashrc)
 #lists all available aliases at start of terminal-
 echo -ne "\n${_bold}${_blue}Aliases: $_reset$_green";
 cat /etc/bash.bashrc | awk '{if($1=="alias")printf("%s,",$2);}' | awk -F= 'BEGIN{RS=",";}{printf("%s, ",$1);}END{;}';
-echo "$_reset";
+echo -n "$_reset";
 
 # Print system and version (Comment these two lines if not wanted)
-echo -ne "\n${_bold}${_blue}System: $_reset$_green";
-lsb_release -irc;
-
-# find declaration of some alias 
-expand(){
-	cat /etc/bash.bashrc | grep -iE "alias $1 ?=";
-}
+echo -ne "\n${_bold}${_blue}System: $_reset$_yellow";
+lsb_release -d | awk '{$1="";print $0}'
+echo -ne "$_reset";
 
 
 ########################## password-typer alias: For people lazy to enter passwords- ##########################  
@@ -303,19 +319,21 @@ if [ ! -f ~/.myencpswd ]; then
 
 fi
 
+# HOW TO USE: 
 # Now just prepend an 's' before sudo -S -E to bypass - Example usage : 's sudo -S -E ..' or 's bashrc'
-######  ##########################  ##########################  ##########################  
+
 
 
 # Startup directory; 
 # Changes directory only when opened in HOME (not when in other specific folder);
 if [ "$PWD" == "$HOME" ] && [ $(whoami) != "root" ]; then
-	if [ -d $HOME/Downloads/coding];then 
+	if [ -d $HOME/Downloads/coding ];then 
 		cd $HOME/Downloads/coding;
 	else
 		cd $HOME/Desktop/;
 	fi
 fi
+############## ############## COMMENTS ONLY SECTION BELOW ############## ##############
 
 
 ############## ############## ROUGH WORK ############## ##############
@@ -389,5 +407,4 @@ fi
 
 # Remove previous entry from history-
 # history -d $(history | tail -2 | head -1 |  awk '{print $1;}')
-
 # <<< Made with ♥ by Udayraj >>>
