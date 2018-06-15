@@ -9,6 +9,17 @@ _reset=$(tput sgr0);		_bold=$(tput bold);
 # Syntax guide: Each color only marks the start of that color(see examples below)
 
 update_pass(){
+	# check if existing password works
+	if [ -f ~/.myencpswd ]; then 
+		PASSWD=$(cat ~/.myencpswd | openssl enc -d -aes-128-cbc -a -salt -pass pass:mysalt);
+		sudo -k ; # Flush sudo session if any.
+		echo $PASSWD | sudo -S echo &> /dev/null ;
+		success_flag=$?;
+		if [ $success_flag -eq 0 ];then
+			echo "$_green Password is already updated and working! $_reset";
+			exit 0;
+		fi
+	fi
 	#Set password into encrypted file
 	echo -n "Enter password: ";
 	read -rs PASSWD
@@ -16,23 +27,28 @@ update_pass(){
 	echo $PASSWD | sudo -S echo &> /dev/null ;
 	success_flag=$?;
 	if [ $success_flag -eq 0 ];then
-	    	echo $PASSWD | openssl enc -aes-128-cbc -a -salt -pass pass:mysalt > ~/.myencpswd;	
-		echo "$_green Password updated. $_reset";
-		#Reference -https://unix.stackexchange.com/questions/291302/password-encryption-and-decryption	
+    	echo $PASSWD | openssl enc -aes-128-cbc -a -salt -pass pass:mysalt > ~/.myencpswd;	
+		echo "$_green Password is updated. $_reset";
 	else 
 	    	echo "$_red Wrong password. Run update_pass again! $reset";
 	fi
-	PASSWD=;//reset var
-# ref: https://askubuntu.com/questions/611580/how-to-check-the-password-entered-is-a-valid-password-for-this-user	
+	PASSWD= ;#reset var
+# References: https://unix.stackexchange.com/questions/291302/password-encryption-and-decryption	
+# 			  https://askubuntu.com/questions/611580/how-to-check-the-password-entered-is-a-valid-password-for-this-user	
 }
 
 first_time(){
-	if ! [ -x "$(command -v subl)" ]; then
-  		# Add source for subl, 
+	# configure text editor, machine name
+
+	# install if sublime doesn't exist
+	if ! ([ -x "$(command -v subl)" ] || [ -x "$(command -v sublime_text)" ]); then 
 		sudo add-apt-repository ppa:webupd8team/sublime-text-3
-		# Official wasn't working somehow: ref: http://tipsonubuntu.com/2017/05/30/install-sublime-text-3-ubuntu-16-04-official-way/
 		sudo apt-get update
 		sudo apt-get install sublime-text-installer;
+		# make it default
+		echo
+		echo "Replacing gedit with sublime as default editor..."
+		sudo sed -i 's/gedit.desktop/sublime_text.desktop/g' /etc/gnome/defaults.list 
 	fi	
 
 	# Install all dependecies
@@ -133,7 +149,10 @@ alias v="xclip -o";
 # alias lstree="tree -L 1 --dirsfirst -rc"
 #function to print directory tree upto input level $1
 lstree(){
-	tree -L $1 --dirsfirst -rc
+	shift;  COMMAND=$@; # More compatible
+	echo "Running tree -L $COMMAND --dirsfirst -rc"
+	tree -L $COMMAND --dirsfirst -rc
+	echo "Hint: use 'lstree --du' to show directory sizes";
 }
 
 #function to make dir and change to it immediately
@@ -246,38 +265,56 @@ alias smoothmouse="xkbset ma 60 10 100 50 2";
 alias kbmouse="xkbset q | grep Mouse"; #list mouse settings
 
 
-### OTHERS ###
+### Things related to this file ###
+## startup lines are printed from here 
+
 #lists all functions defined in this file
 echo -n "${_bold}${_blue}Functions: $_reset$_magenta";
 while read line; do 
     echo -ne $line,;
 done < <(grep -o '^ *\w\w*()' /etc/bash.bashrc)
-echo -ne "\n${_bold}${_blue}Aliases: $_reset$_green";
+
 #lists all available aliases at start of terminal-
+echo -ne "\n${_bold}${_blue}Aliases: $_reset$_green";
 cat /etc/bash.bashrc | awk '{if($1=="alias")printf("%s,",$2);}' | awk -F= 'BEGIN{RS=",";}{printf("%s, ",$1);}END{;}';
 echo "$_reset";
 
-########################## password-typer alias: For people lazy to enter passwords- ##########################  
-# The file is set from update_pass function.
-# Comment this line if you don't want the password-typer feature:
-alias s="echo $(cat ~/.myencpswd | openssl enc -d -aes-128-cbc -a -salt -pass pass:mysalt) |";
-# ^Note : the pipe(|) at the end also prevents printing the password in terminal 
-# 		  on pressing `s` or `s echo` (as echo doesn't read from stdin)
+# Print system and version (Comment these two lines if not wanted)
+echo -ne "\n${_bold}${_blue}System: $_reset$_green";
+lsb_release -irc;
 
+# find declaration of some alias 
+expand(){
+	cat /etc/bash.bashrc | grep -iE "alias $1 ?=";
+}
+
+
+########################## password-typer alias: For people lazy to enter passwords- ##########################  
 if [ ! -f ~/.myencpswd ]; then 
+# The file is set from update_pass function.
 	echo "Password file not set. Set the password to continue:";
 	update_pass;
+	# Comment this line if you don't want the password-typer feature:
+
+	alias s="echo $(cat ~/.myencpswd | openssl enc -d -aes-128-cbc -a -salt -pass pass:mysalt) |";
+
+	# ^Note : the pipe(|) at the end also prevents printing the password in terminal 
+	# 		  on pressing `s` or `s echo` (as echo doesn't read from stdin)
+
 fi
 
 # Now just prepend an 's' before sudo -S -E to bypass - Example usage : 's sudo -S -E ..' or 's bashrc'
 ######  ##########################  ##########################  ##########################  
 
 
-# Startup directory; useful sometimes
-# Only if opened in HOME directory;
+# Startup directory; 
+# Changes directory only when opened in HOME (not when in other specific folder);
 if [ "$PWD" == "$HOME" ] && [ $(whoami) != "root" ]; then
-	cd $HOME/Downloads/coding;
-	#cd $HOME/Desktop/;
+	if [ -d $HOME/Downloads/coding];then 
+		cd $HOME/Downloads/coding;
+	else
+		cd $HOME/Desktop/;
+	fi
 fi
 
 
@@ -319,6 +356,8 @@ fi
 # CURR_FILE=$(cut -d "=" -f 2 <<< "$CURR_FILE")        # File name only
 # CURR_FILE=$(echo "$CURR_FILE" | tr -d '"')           # Remove double quotes
 
+# grep:  -E for regex
+
 # echo -ne 'something\n' (-n will not output the trailing newline,-e will interpret backslash escape symbols)
 # Use of curly brackets is to avoid spaces, can also use consecutive strings: 
 #	 echo -n "${_green}Functions:""$_blue"; #when you dont want spaces
@@ -350,3 +389,5 @@ fi
 
 # Remove previous entry from history-
 # history -d $(history | tail -2 | head -1 |  awk '{print $1;}')
+
+# <<< Made with ♥ by Udayraj >>>
