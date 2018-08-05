@@ -1,0 +1,72 @@
+############## ############## BASH NOTES ############## ##############
+# Why bash.bashrc over ~/.bashrc
+# 	bash.bashrc Loads before ~/.bashrc (test by putting echo commands at start of each file),
+#   and if you spawn a new shell(like zsh, or fish) the contents of ~/.bashrc won't be read.
+# 	In other words, ~/.bashrc is only read when starting an interactive (non-login) shell. 
+# 
+
+
+# Note : sudo -S takes password from stdin! 
+# Popular shells have a $SECONDS variable that stores no of seconds in the session.
+
+# `test` string comparisions require a space in between!  if [ "$PWD" == "$HOME" ]; then
+# watch -d=cumulative hightlights character-level changes, 
+
+
+# '&&' ensures to run second command only if first runs
+# One can see return status of previous command by echo $? (0 is success)
+
+#Single quotes are not same as double quotes!
+# https://stackoverflow.com/questions/23414407/bash-ps1-shows-instead-of-for-root
+
+# Some string manipulations
+# CURR_FILE=$(cat /etc/default/grub | grep BACKGROUND) # Get grub current line
+# CURR_FILE=$(cut -d "=" -f 2 <<< "$CURR_FILE")        # File name only
+# CURR_FILE=$(echo "$CURR_FILE" | tr -d '"')           # Remove double quotes
+
+# grep:  -E for regex
+
+# echo -ne 'something\n' (-n will not output the trailing newline,-e will interpret backslash escape symbols)
+# Use of curly brackets is to avoid spaces, can also use consecutive strings: 
+#	 echo -n "${_green}Functions:""$_blue"; #when you dont want spaces
+
+
+# Network manager cli to Up/Down a connection by name
+# sudo nmcli con up my_vpn
+
+
+#Bash quotes (in prog)-
+# Single quotes (when not inside dbl quotes)
+# 	> Doesn't evaluate variables.
+# 	> Doesn't print the quotes
+
+# Escaped Single quotes(when not inside dbl quotes)
+# 	> Evaluates variables* and prints the quotes
+
+# Double quotes
+# 	> Evaluates variables and doesn't print the quotes
+
+
+# Substrings in bash- ${my_string:2}
+	# Args
+	# https://stackoverflow.com/questions/9057387/process-all-arguments-except-the-first-one-in-a-bash-script
+	# shift;COMMAND=$@; # More compatible
+	# ${@:2} does not work in sh, only bash. this is called substring expansion and has a special behaviour for @.
+	# usually it counts the characters, but for @ it counts the parameters
+	# For sh, type the command 'shift', then $@ contains
+
+# Remove previous entry from history-
+# history -d $(history | tail -2 | head -1 |  awk '{print $1;}')
+
+############## ############## ROUGH WORK ############## ##############
+# export PROMPT_COMMAND="echo -n \[\$(date +%T)\]\ "; # PS1 method looks better.
+# Somehow the Time Doesn't stick when used Ctrl+L tho
+
+# PS1 is overridden by ~/.bashrc at last, so put these lines there:
+# https://www.cyberciti.biz/tips/howto-linux-unix-bash-shell-setup-prompt.html
+# PS1 with a timestamp-
+# export PS1='\e[0;49;33m[\D{%T}\[\]]\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\W\[\033[00m\]\$ '
+# PS1 with command number,session seconds-
+# export PS1='\e[0;49;33m(\!:$SECONDS)\[\]\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\W\[\033[00m\]\$ '
+
+

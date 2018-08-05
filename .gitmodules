@@ -1,0 +1,9 @@
+[submodule "Git/git-extras"]
+	path = Git/git-extras
+	url = https://github.com/tj/git-extras
+[submodule "Git/holoviews"]
+	path = Git/holoviews
+	url = https://github.com/ioam/holoviews
+[submodule "Git/holoviews2"]
+	path = Git/holoviews2
+	url = https://github.com/ioam/holoviews
