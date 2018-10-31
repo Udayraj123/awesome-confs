@@ -8,6 +8,9 @@
 
 { "keys": ["ctrl+shift+v"], "command": "paste" },
 
+// Very helpful - saves opening task manager
+{ "keys": ["ctrl+shift+c"], "command": "cancel_build" },
+
 // for uppercase:
 { "keys": ["ctrl+u"], "command": "upper_case" },
 

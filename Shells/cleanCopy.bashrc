@@ -146,7 +146,7 @@ parse_output(){
 	oldIFS=$IFS;
 	IFS=;
 	output=$(eval $COMMAND);
-	success_flag=$?;
+	success_flag=$?;	
 	
 	# TODO: Fix this line-
 	echo $output | grep -i --color "'$pattern'"; 

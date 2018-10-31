@@ -20,3 +20,7 @@
 ## Git 
 A good cheatsheet and starter commands are included.
 
+#TODO
+[ ] Add demo gif for shell
+[_] Cleaner bashrc
+[X] build systems on linux

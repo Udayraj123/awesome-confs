@@ -40,4 +40,4 @@ then you shall comment out the line -
 # Comment this line if you don't want the password-typer feature:
 alias s="echo $(cat ~/.myencpswd | openssl enc -d -aes-128-cbc -a -salt -pass pass:mysalt) |"
 ```
-Also, have a look at this link: [https://askubuntu.com/questions/24006/how-do-i-reset-a-lost-administrative-password](https://askubuntu.com/questions/24006/how-do-i-reset-a-lost-administrative-password)
+Also, if you are worried about anyone on your pc being able to access your password?- Have a look at this link: [https://askubuntu.com/questions/24006/how-do-i-reset-a-lost-administrative-password](https://askubuntu.com/questions/24006/how-do-i-reset-a-lost-administrative-password)
