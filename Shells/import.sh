@@ -6,8 +6,8 @@ fi
 BASHRC_FILE="/etc/bash.bashrc"
 
 # check if already copied!
-cat $BASHRC_FILE | grep -i "<<< Made with ♥ by Udayraj >>>";
-if [ $? -e 0 ]; then
+cat $BASHRC_FILE | grep -i --color "Made with ♥ by Udayraj";
+if [ "$?" == "0" ]; then
 	echo "Seems like the file is already appended! Show file [y/n]? ";
 	read show;
 	if [ $show -e "n" ]; then

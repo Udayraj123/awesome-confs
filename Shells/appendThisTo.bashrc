@@ -1,6 +1,10 @@
 ############## ############## AWESOME-BASHRC CODE BELOW ############## ##############
-
 # <<< Made with ♥ by Udayraj >>>
+
+# set these variables to customize:
+TEXT_EDITOR=subl
+GIT_USERNAME=udayraj123
+
 # Sequence of text colors : black (0), red, green, yellow, blue, magenta, cyan,white
 # https://ss64.com/bash/syntax-prompt.html
 _black=$(tput setaf 0);	_red=$(tput setaf 1);
@@ -44,16 +48,16 @@ update_pass(){
 first_time(){
 	# configure text editor, machine name
 
-	# install if sublime doesn't exist
-	if ! ([ -x "$(command -v subl)" ] || [ -x "$(command -v sublime_text)" ]); then 
-		sudo add-apt-repository ppa:webupd8team/sublime-text-3
-		sudo apt-get update
-		sudo apt-get install sublime-text-installer;
-		# make it default
-		echo
-		echo "Replacing gedit with sublime as default editor..."
-		sudo sed -i 's/gedit.desktop/sublime_text.desktop/g' /etc/gnome/defaults.list 
-	fi	
+	# install if $TEXT_EDITORime doesn't exist
+#	if ! ([ -x "$(command -v $TEXT_EDITOR)" ] || [ -x "$(command -v $TEXT_EDITORime_text)" ]); then 
+#		sudo add-apt-repository ppa:webupd8team/$TEXT_EDITORime-text-3
+#		sudo apt-get update
+#		sudo apt-get install $TEXT_EDITORime-text-installer;
+#		# make it default
+#		echo
+#		echo "Replacing gedit with $TEXT_EDITORime as default editor..."
+#		sudo sed -i 's/gedit.desktop/$TEXT_EDITORime_text.desktop/g' /etc/gnome/defaults.list 
+#	fi	
 	
 	# Install all dependecies
 	sudo apt-get install -y git tree xkbset xclip lolcat cowsay sox libsox-fmt-all
@@ -83,8 +87,6 @@ first_time(){
 	fi;
 	update_pass;
 }
-# LOAD VARS FROM OWN CONFIG FILE
-GIT_USERNAME=Udayraj123
 
 # Note: PS1 is overridden by ~/.bashrc at last, so put these lines there (separately for each user, including root!):
 # Or you can comment the lines there, then uncomment here!
@@ -172,7 +174,7 @@ alias c="xclip -selection clipboard";
 alias v="xclip -o";
 
 # TODO: Git clone from clipboard url (with validation)
-# https://stackoverflow.com/questions/749544/pipe-to-from-the-clipboard-in-bash-script?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+# https://stackoverflow.com/questions/749544/pipe-to-from-the-clipboard-in-bash-script
 # ^ xclip would do it
 
 
@@ -240,7 +242,7 @@ parse_output(){
 	return $success_flag;
 }
 parse_squid(){
-	parse_output 'squid.conf:\|Error:\|always_direct\|never_direct\|cache_peer\|$' sudo -S -E squid -k parse 2>&1;
+	parse_output 'squid.conf:\|Error:\|always_direct\|deny\|never_direct\|cache_peer\|$' sudo -S -E squid -k parse 2>&1;
 }
 execute_with_feedback(){
 	COMMAND=$@;
@@ -274,15 +276,15 @@ alias reapache2="execute_with_feedback sudo service apache2 restart";
 alias rebash="exec bash";
 
 #Config files
-alias bashrc="sudo -S -E subl /etc/bash.bashrc";
-alias envfile="sudo -S -E subl /etc/environment";
-alias dotbashrc="sudo -S -E subl $HOME/.bashrc";
-alias aptconf="sudo -S -E subl /etc/apt/apt.conf"; 
-alias apache2conf="sudo -S -E subl /etc/apache2/apache2.conf";
-alias apache2defconf="sudo -S -E subl /etc/apache2/sites-available/000-default.conf";
-alias apache2log="sudo -S -E subl /var/log/apache2/error.log";
+alias bashrc="sudo -S -E $TEXT_EDITOR /etc/bash.bashrc";
+alias envfile="sudo -S -E $TEXT_EDITOR /etc/environment";
+alias dotbashrc="sudo -S -E $TEXT_EDITOR $HOME/.bashrc";
+alias aptconf="sudo -S -E $TEXT_EDITOR /etc/apt/apt.conf"; 
+alias apache2conf="sudo -S -E $TEXT_EDITOR /etc/apache2/apache2.conf";
+alias apache2defconf="sudo -S -E $TEXT_EDITOR /etc/apache2/sites-available/000-default.conf";
+alias apache2log="sudo -S -E $TEXT_EDITOR /var/log/apache2/error.log";
 #check if u need to replace squid with squid3
-alias squidconf="sudo -S -E subl /etc/squid/squid.conf";
+alias squidconf="sudo -S -E $TEXT_EDITOR /etc/squid/squid.conf";
 #also verify if passwd filename is squid_passwd,etc.
 alias mksquidusr="sudo -S -E htpasswd -c /etc/squid/passwd ";
 
