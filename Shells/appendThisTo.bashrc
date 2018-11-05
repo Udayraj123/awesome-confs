@@ -40,6 +40,7 @@ update_pass(){
 # 			  https://askubuntu.com/questions/611580/how-to-check-the-password-entered-is-a-valid-password-for-this-user	
 }
 
+# This should be re-runnable
 first_time(){
 	# configure text editor, machine name
 
@@ -64,10 +65,22 @@ first_time(){
 
 	
 	if ! ([ -x "$(command -v git)" ]); then 
+		echo "Configure your github details(for git utilities)";
 		git config --global credential.helper store;
 		echo "Enter your github username: ";
-		read GIT_USERNAME
+		read GIT_USERNAME;
+		git config --global user.name $GIT_USERNAME;
+		echo "Enter your github email: ";
+		read GIT_EMAIL;
+		git config --global user.email $GIT_EMAIL;
 	fi
+	echo "Want to set RTC in local time(To fix time difference prob with dual boot)?(y/n)";
+	read temp;
+	if [ "$temp" == "y" ]; then
+		timedatectl set-local-rtc 1 --adjust-system-clock;
+		timedatectl | grep -E "^|RTC in local TZ:";
+		echo "Done :) Check the clock now...";
+	fi;
 	update_pass;
 }
 # LOAD VARS FROM OWN CONFIG FILE
