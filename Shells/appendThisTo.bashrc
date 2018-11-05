@@ -70,13 +70,17 @@ first_time(){
 	
 	if ! ([ -x "$(command -v git)" ]); then 
 		echo "Configure your github details(for git utilities)";
-		git config --global credential.helper store;
 		echo "Enter your github username: ";
 		read GIT_USERNAME;
 		git config --global user.name $GIT_USERNAME;
 		echo "Enter your github email: ";
 		read GIT_EMAIL;
 		git config --global user.email $GIT_EMAIL;
+
+		# Some rather useful configurations (provided its your personal PC)
+		git config --global credential.helper store;
+		git config --global alias.add-commit '!git add . && git commit -m ';
+
 	fi
 	echo "Want to set RTC in local time(To fix time difference prob with dual boot)?(y/n)";
 	read temp;
