@@ -1,9 +1,14 @@
 ############## ############## AWESOME-BASHRC CODE BELOW ############## ##############
 # <<< Made with ♥ by Udayraj >>>
 
+
+
 # set these variables to customize:
 TEXT_EDITOR=subl
 GIT_USERNAME=udayraj123
+SQUID_PROXY_ON=1
+
+
 
 # Sequence of text colors : black (0), red, green, yellow, blue, magenta, cyan,white
 # https://ss64.com/bash/syntax-prompt.html
@@ -24,7 +29,7 @@ update_pass(){
 		success_flag=$?;
 		if [ $success_flag -eq 0 ];then
 			echo "$_green Password is already updated and working! $_reset";
-			exit 0;
+			return 0;
 		fi
 	fi
 	#Set password into encrypted file
@@ -37,7 +42,7 @@ update_pass(){
     	echo $PASSWD | openssl enc -aes-128-cbc -a -salt -pass pass:mysalt > ~/.myencpswd;	
 		echo "$_green Password is updated. $_reset";
 	else 
-	    	echo "$_red Wrong password. Run update_pass again! $reset";
+	    	echo "$_red Wrong password. Run update_pass again! $_reset";
 	fi
 	PASSWD= ;#reset var
 # References: https://unix.stackexchange.com/questions/291302/password-encryption-and-decryption	
@@ -48,51 +53,62 @@ update_pass(){
 first_time(){
 	# configure text editor, machine name
 
-	# install if $TEXT_EDITORime doesn't exist
-#	if ! ([ -x "$(command -v $TEXT_EDITOR)" ] || [ -x "$(command -v $TEXT_EDITORime_text)" ]); then 
-#		sudo add-apt-repository ppa:webupd8team/$TEXT_EDITORime-text-3
+	# install if sublime doesn't exist
+        # Note: For latest method of installation go here - https://www.sublimetext.com/docs/3/linux_repositories.html#apt
+#	if ! ([ -x "$(command -v subl)" ] || [ -x "$(command -v sublime_text)" ]); then 
+#		sudo add-apt-repository ppa:webupd8team/sublime-text-3
 #		sudo apt-get update
-#		sudo apt-get install $TEXT_EDITORime-text-installer;
+#		sudo apt-get install sublime-text-installer;
 #		# make it default
 #		echo
-#		echo "Replacing gedit with $TEXT_EDITORime as default editor..."
-#		sudo sed -i 's/gedit.desktop/$TEXT_EDITORime_text.desktop/g' /etc/gnome/defaults.list 
+#		echo "Replacing gedit with sublime as default editor..."
+#		sudo sed -i 's/gedit.desktop/sublime_text.desktop/g' /etc/gnome/defaults.list 
 #	fi	
 	
 	# Install all dependecies
-	sudo apt-get install -y git tree xkbset xclip lolcat cowsay sox libsox-fmt-all
+	sudo apt-get install -y git tree xkbset xclip lolcat cowsay sox libsox-fmt-all apache2-utils
 	# tree for lstree function
 	# xkbset for mouse control via numpad
 	# xclip can copy/paste from terminal
 	# lolcat cowsay for fancy displaying.
-	# sox libsox-fmt-all are needed for 'play' command
+	# sox libsox-fmt-all are needed for mp3 support in notifications ('play' command)
+	# apache2-utils needed for htpasswd
 
 	
-	if ! ([ -x "$(command -v git)" ]); then 
+	if ([ -x "$(command -v git)" ]); then 
 		echo "Configure your github details(for git utilities)";
-		echo "Enter your github username: ";
+		echo "$_green Enter your github username: ";
 		read GIT_USERNAME;
 		git config --global user.name $GIT_USERNAME;
-		echo "Enter your github email: ";
+		echo "$_green Enter your github email: ";
 		read GIT_EMAIL;
 		git config --global user.email $GIT_EMAIL;
 
 		# Some rather useful configurations (provided its your personal PC)
-		git config --global credential.helper store;
+		echo "$_green Do you want github to remember your password?(y/n)$_reset";
+		read tempinp;
+		if [ "$tempinp" == "y" ]; then
+			git config --global credential.helper store;
+		fi
+		echo "Adding alias: 'add-commit'"
 		git config --global alias.add-commit '!git add . && git commit -m ';
-
+		echo "(Usage: git add-commit 'commit message')"
 	fi
-	echo "Want to set RTC in local time(To fix time difference prob with dual boot)?(y/n)";
-	read temp;
-	if [ "$temp" == "y" ]; then
+	echo "$_greenWant to set RTC in local time(To fix time difference prob with dual boot)?(y/n) $_reset";
+	read tempinp;
+	if [ "$tempinp" == "y" ]; then
 		timedatectl set-local-rtc 1 --adjust-system-clock;
 		timedatectl | grep -E "^|RTC in local TZ:";
-		echo "Done :) Check the clock now...";
-	fi;
+		echo "$_green Done :) Check the clock now... $_reset";
+	fi
+	echo "Moving on...";
+	echo "Updating locate command's filesystem database...";
+	sudo updatedb
+	echo "Updating password..."
 	update_pass;
 }
 
-# Note: PS1 is overridden by ~/.bashrc at last, so put these lines there (separately for each user, including root!):
+# Note: Put these lines into ~/.bashrc. Because PS1 is overridden there after this file,
 # Or you can comment the lines there, then uncomment here!
 
 # PS1 with a timestamp-
@@ -105,13 +121,14 @@ first_time(){
 alias sudo="sudo -E -S"; # Keep env same and accept password from stdin
 alias ping="ping -R"; # Record route
 alias locate="locate -b -r"; #Only basenames and regex
+alias ls2="lstree";
 # install cowsay for this - sudo apt-get install cowsay 
-alias lc="ls -a | cowsay -n";
+alias ls3="ls -a | cowsay -n";
 # if you want a lovely rainbow output, pipe it further to lolcat!
-alias ls2="ls -a | cowsay -ne ❤❤ | lolcat";
+alias ls4="ls -a | cowsay -ne ❤❤ | lolcat";
 # ^ https://www.tecmint.com/lolcat-command-to-output-rainbow-of-colors-in-linux-terminal/
-
 alias watch="watch -d=cumulative"; # character level changes only
+
 # for line level changes-
 watchDiff(){ 
 	# Do not pass commands like 'top', they don't work with watch either
@@ -127,30 +144,28 @@ watchDiff(){
 
 # Network
 alias testnet="wget google.com -O /dev/null";
-alias mysql-login="mysql -u root -proot"; #configure your password
 alias servepy="python3 -m http.server";
-alias servepy2="python2.7 -m SimpleHTTPServer";
+# alias servepy2="python2.7 -m SimpleHTTPServer";
 
 
-# These lines need to be in /etc/environment for all to work,
-# using them here will not work while installing some packages like- phpstorm(or any snap package)
-export http_proxy="http://the17:the17@127.0.0.1:3128/";
-export https_proxy="http://the17:the17@127.0.0.1:3128/";
+# These lines best be in /etc/environment for all types of pkg to work,
+# using them here will not work while installing snap packages like phpstorm
+if [[ "$SQUID_PROXY_ON" == "1" ]]; then
+	export http_proxy="http://the17:the17@127.0.0.1:3128/";
+	export https_proxy="http://the17:the17@127.0.0.1:3128/";
 
-#### PIP Requirements ####
-# all_proxy is required for pip! When it gives "Missing SOCK support" error-
-export all_proxy="http://the17:the17@127.0.0.1:3128";
+	#### PIP Requirements ####
+	# all_proxy is required for pip! When it gives "Missing SOCK support" error-
+	export all_proxy="http://the17:the17@127.0.0.1:3128";
+fi
 
 
 ## HOMEs and PATHs
-export CASSANDRA_HOME="/var/lib/cassandra"; # ="/usr/share/cassandra";
-export NEO4J_HOME="/var/lib/neo4j";
-# export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-9.0/lib64;
-# export CUDA_HOME="/usr/local/cuda-9.0";
-# export JAVA_HOME="/usr/lib/jvm/java-8-oracle";
 
 # Some packages(like pyinstaller) get installed here- 
 PATH=$PATH:$HOME/.local/bin
+# cowsay gets here
+PATH=$PATH:/usr/games
 # For Composer packages (like laravel)
 PATH=$PATH:$HOME/.config/composer/vendor/bin
 
@@ -160,14 +175,13 @@ PATH=$PATH:$HOME/.config/composer/vendor/bin
 
 alias install="sudo -S -E apt-get install";
 alias update="sudo -S -E apt-get update";
-alias autoremove="sudo -S -E apt-get autoremove";
-alias removeapp="sudo -S -E apt-get remove";
-alias purgeapp="sudo -S -E apt-get purge";
 
-alias files="sudo -S -E nautilus /";
+alias explorer="sudo -S -E nautilus /";
 alias restart="sudo -S -E shutdown -r +0";
 alias shutdown="sudo -S -E shutdown +0";
-alias remount="sudo -S -E mount -o remount,rw";
+# For issues accessing windows drives -
+# alias remount="sudo -S -E mount -o remount,rw";
+
 #use gc to compile, use ./a to run compiled c program
 alias gc="gcc -o a ";
 
@@ -187,14 +201,15 @@ alias v="xclip -o";
 #function to print directory tree upto input level $1
 lstree(){
 	# shift;  COMMAND=$@; # More compatible
-	COMMAND="$1 $2";	
-	if [ "$COMMAND" == "" ]; then 
+	COMMAND="$1 $2";		
+	if ([ "$COMMAND" == " " ] || [ "$COMMAND" == "" ]); then 
 		COMMAND="2";
-	fi;
+	fi
 	echo "$_magenta Running tree -L $COMMAND --dirsfirst -rc $_reset"
 	tree -L $COMMAND --dirsfirst -rc
 	echo "$_yellow Hint: use 'lstree <level> --du' to show directory sizes $_reset";
 }
+
 
 #function to make dir and change to it immediately
 mcd(){ 
@@ -202,7 +217,7 @@ mkdir $1;
 cd $1;
 }
 
-# useful in competitive programming- to delete all .out files and alike from current directory
+# One usecase in competitive programming- to delete all .out files and alike from current directory
 alias rmexecs="find . -type f -executable -exec rm '{}' \;"
 #rm $(find . -type f | xargs file | grep "ELF.*shared object" | awk -F: '{print $1}' | xargs echo)
 
@@ -213,6 +228,7 @@ showalias(){ # expand keyword is taken
 }
 
 myclone(){
+# Usage : 'git clone https://github.com/yourusername/reponame' will become  'myclone reponame'
 	git clone https://github.com/$GIT_USERNAME/$1
 }
 parse_output(){
@@ -241,7 +257,7 @@ parse_output(){
 		echo "$_green Output Successfully parsed. $_reset";
 	else
 		echo "$_red There was some error found in the output($success_flag). Check and try again. $_reset";
-	fi;
+	fi
 	IFS=$oldIFS; 
 	return $success_flag;
 }
@@ -265,18 +281,8 @@ execute_with_feedback(){
 	play -q ~/Music/Notify.mp3 reverse;
 }
 
-# Service check/start/restart/stop
-alias checkcass="sudo service cassandra status && sudo nodetool status";
-alias startcass="sudo service cassandra status && sudo -u cassandra cassandra -f";
-alias cqlshell="cqlsh --debug --color --request-timeout=30";
-
-alias startneo4j="sudo -u neo4j neo4j console";
-alias startneo4jbg="sudo -u neo4j neo4j start || sudo -u neo4j neo4j status";
-alias checkneo4j="sudo -u neo4j neo4j status || sudo systemctl status neo4j";
-
 # '&&' ensures to run second command only if first runs
 alias resquid="parse_squid && execute_with_feedback sudo service squid restart && testnet";
-alias reapache2="execute_with_feedback sudo service apache2 restart";
 alias rebash="exec bash";
 
 #Config files
@@ -284,34 +290,11 @@ alias bashrc="sudo -S -E $TEXT_EDITOR /etc/bash.bashrc";
 alias envfile="sudo -S -E $TEXT_EDITOR /etc/environment";
 alias dotbashrc="sudo -S -E $TEXT_EDITOR $HOME/.bashrc";
 alias aptconf="sudo -S -E $TEXT_EDITOR /etc/apt/apt.conf"; 
-alias apache2conf="sudo -S -E $TEXT_EDITOR /etc/apache2/apache2.conf";
-alias apache2defconf="sudo -S -E $TEXT_EDITOR /etc/apache2/sites-available/000-default.conf";
-alias apache2log="sudo -S -E $TEXT_EDITOR /var/log/apache2/error.log";
+
 #check if u need to replace squid with squid3
 alias squidconf="sudo -S -E $TEXT_EDITOR /etc/squid/squid.conf";
-#also verify if passwd filename is squid_passwd,etc.
+#also verify if passwd filename is squid_passwd,etc. (needs apache2-utils installed)
 alias mksquidusr="sudo -S -E htpasswd -c /etc/squid/passwd ";
-
-## Specific functions
-clearcass(){
-	CASSANDRA_HOME="/var/lib/cassandra";
-	directories=$(find $CASSANDRA_HOME/data/ -mindepth 1 -maxdepth 1 -type d -not -name '\.*' -not -name 'system*');
-	for dir in $directories; do
-		echo "clean" $dir;
-		sudo rm -rf $dir;
-		sudo mkdir $dir;
-	done;
-	echo "Chown Chown";
-	sudo chown -R cassandra:cassandra $CASSANDRA_HOME;
-	ls $CASSANDRA_HOME/data;
-}
-
-
-# install xkbset first & enable "mouse keys" from Access Center
-alias fastmouse="xkbset ma 60 10 100 100 2";
-alias smoothmouse="xkbset ma 60 10 100 50 2";
-alias kbmouse="xkbset q | grep Mouse"; #list mouse settings
-
 
 ### Things related to this file ###
 
@@ -327,7 +310,7 @@ done < <(grep -o '^ *\w\w*()' /etc/bash.bashrc)
 echo -ne "\n${_bold}${_blue}Aliases: $_reset$_green";
 cat /etc/bash.bashrc | awk '{if($1=="alias")printf("%s,",$2);}' | awk -F= 'BEGIN{RS=",";}{printf("%s, ",$1);}END{;}';
 echo -n "$_reset";
-
+ 
 # Print system and version (Comment these two lines if not wanted)
 echo -ne "\n${_bold}${_blue}System: $_reset$_yellow";
 lsb_release -d | awk '{$1="";print $0}'
@@ -353,7 +336,9 @@ if [ "$PWD" == "$HOME" ] && [ $(whoami) != "root" ]; then
 	if [ -d $HOME/Downloads/coding ];then 
 		cd $HOME/Downloads/coding;
 	else
-		cd $HOME/Desktop/;
+		# Type your default startup directory
+		cd $HOME;
+		# cd $HOME/Desktop/;
 	fi
 fi
 

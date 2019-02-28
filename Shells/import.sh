@@ -7,6 +7,7 @@ BASHRC_FILE="/etc/bash.bashrc"
 
 # check if already copied!
 echo "Checking if content already appended in '$BASHRC_FILE'...";
+# Search for signature 
 cat $BASHRC_FILE | grep -i --color "by Udayraj";
 if [ "$?" == "0" ]; then
 	echo -n "Seems like this file is already appended! Edit file [y/n]? ";
@@ -17,6 +18,10 @@ if [ "$?" == "0" ]; then
 	fi
 	exit 1;
 fi
+
+echo "Copying notification sound to ~/Music";
+cp --no-clobber ./Notify.mp3 ~/Music
+echo "Done";
 
 echo "Making backup..";
 sudo cp $BASHRC_FILE $BASHRC_FILE.backup
