@@ -6,7 +6,7 @@
 # set these variables to customize:
 TEXT_EDITOR=subl
 GIT_USERNAME=udayraj123
-SQUID_PROXY_ON=1
+SQUID_PROXY_ON=0
 
 
 
